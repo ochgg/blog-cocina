@@ -23,6 +23,11 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+//Rutas
+const routes_articulo = require("./routes/articulo");
+
+//Carga las rutas
+app.use("/", routes_articulo);
 
 
 
