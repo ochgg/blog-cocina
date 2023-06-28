@@ -5,6 +5,8 @@ import { Articles } from '../components/pages/Articles';
 import { Navigation } from '../components/layout/Navigation';
 import { Header } from '../components/layout/Header';
 import { Footer } from '../components/layout/Footer';
+import { Create } from '../components/pages/Create';
+import { Edit } from '../components/pages/Edit';
 
 export const Routing = () => {
   return (
@@ -21,10 +23,11 @@ export const Routing = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/articles" element={<Articles />} />
+                <Route path="/create" element={<Create />} />
+                <Route path="/edit" element={<Edit />} />
            </Routes>
            
            <Footer />
     </BrowserRouter>
-    
   )
 }
