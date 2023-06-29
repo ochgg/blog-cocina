@@ -4,6 +4,7 @@ const connection = require("./config/connection");
 const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 require("dotenv").config();
 
@@ -128,6 +129,75 @@ app.put("/articulo/:id", upload.single("image"), async (req, res) => {
     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
   }
 });
+
+
+///////////////Borrar Articulo//////////////
+// app.delete("/delete/:id", async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const dbConnection = await connection();
+//     const deleteArticuloSql = "DELETE FROM posts WHERE id_posts = ?";
+//     const [result] = await dbConnection.query(deleteArticuloSql, [id]);
+
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ message: "El articulo no existe" });
+//     }
+
+//     res.json({ status: "success" });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+//   }
+// });
+
+// Ruta para eliminar un articulo
+app.delete("/delete/:id", async (req, res) => {
+  const { id } = req.params; // Obtiene el parámetro ID de la solicitud
+
+  try {
+    const dbConnection = await connection(); // Establece una conexión a la base de datos
+
+    // Consulta SQL para obtener la imagen de la publicación antes de borrarla
+    const selectImageSql = "SELECT image FROM posts WHERE id_posts = ?";
+    const [selectResult] = await dbConnection.query(selectImageSql, [id]);
+
+    if (selectResult.length === 0) {
+      return res.status(404).json({ message: "La publicación no existe" });
+    }
+
+    const imageFileName = selectResult[0].image;
+
+    // Consulta SQL para eliminar la publicación con el ID especificado
+    const deleteArticuloSql = "DELETE FROM posts WHERE id_posts = ?";
+    const [deleteResult] = await dbConnection.query(deleteArticuloSql, [id]);
+
+    if (deleteResult.affectedRows === 0) {
+      return res.status(404).json({ message: "La publicación no existe" });
+    }
+
+    // Borrar la imagen del servidor
+    deleteImage(imageFileName);
+
+    res.json({ status: "success" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+  }
+});
+
+// Función para borrar una imagen del servidor
+function deleteImage(imageFileName) {
+  const imagePath = path.join(__dirname, '/', imageFileName);
+  fs.unlink(imagePath, (err) => {
+    if (err) {
+      console.error('Error al borrar la imagen:', err);
+    } else {
+      console.log('Imagen borrada:', imageFileName);
+    }
+  });
+}
+
+
 
 
 ///////////////////////////////////////////////////
