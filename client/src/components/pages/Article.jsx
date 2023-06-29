@@ -9,6 +9,7 @@ import { Global } from '../../helpers/Global';
 
 export const Article = () => {
   const [articulo, setArticulo] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
   const { id } = useParams();
 
   useEffect(() => {
@@ -29,12 +30,24 @@ export const Article = () => {
     return <div>Cargando...</div>;
   }
 
+  // Función para activar el modo de edición
+  const enterEditMode = () => {
+    setIsEditMode(true);
+  };
+
+  // Función para guardar los cambios
+  const saveChanges = () => {
+    // Realizar la lógica para guardar los cambios
+    // ...
+    setIsEditMode(false);
+  };
+
   return (
     <>
       <div className="py-5 bg-light">
         <div className="container">
           <div className="row row-cols-1 row-cols-md-2 g-2 justify-content-center">
-            {articulo.map(articulo => (
+            {articulo.map((articulo) => (
               <article key={articulo.id} className="col">
                 <div className="card shadow-sm">
                   <img src={Global.url + articulo.image} className="bd-placeholder-img card-img-top" width="100%" height="225" alt="Imagen de la receta" />
@@ -45,12 +58,14 @@ export const Article = () => {
                     <p className="card-text">{articulo.content}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">
-                        <button className="btn btn-sm btn-outline-secondary">
+                        <button className="btn btn-sm btn-outline-secondary" onClick={enterEditMode} disabled={isEditMode}>
                           <BiPencil />
                         </button>
-                        <button type="button" className="btn btn-sm btn-outline-secondary">
+                        {isEditMode && ( // Mostrar el botón FaSave solo cuando está en modo de edición
+                        <button type="button" className="btn btn-sm btn-outline-secondary ml-2" onClick={saveChanges}>
                           <FaSave />
                         </button>
+                      )}
                         <button type="button" className="btn btn-sm btn-outline-secondary">
                           <RiDeleteBinLine />
                         </button>
