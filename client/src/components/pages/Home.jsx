@@ -60,9 +60,9 @@ export const Home = () => {
                     />
                   </Link>
                   <div className="card-body">
-                    <h3 className="card-item">
+                    <h2 className="card-item">
                       <Link to={'/articulo/' + articulo.id_posts}>{articulo.title}</Link>
-                    </h3>
+                    </h2>
                     <p className="card-text">{articulo.content.slice(0, 47) +'...'}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">

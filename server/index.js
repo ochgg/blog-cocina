@@ -85,6 +85,53 @@ app.get("/articulos", async (req, res) => {
   }
 });
 
+/////////// Ruta para obtener Un Articulo/////////////////
+app.get("/articulo/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const dbConnection = await connection();
+    const getArticulosSql = "SELECT * FROM posts WHERE id_posts = ?";
+    const [articulos] = await dbConnection.query(getArticulosSql, [id]);
+    res.json(articulos);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+  }
+});
+
+///////////////// Ruta para editar un articulo////////////
+app.put("/articulo/:id", upload.single("image"), async (req, res) => {
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const image = req.file ? req.file.filename : null; // Obtener el nombre del archivo si se ha subido
+
+  try {
+    const dbConnection = await connection();
+    const updateArticuloSql =
+      "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
+    const [result] = await dbConnection.query(updateArticuloSql, [
+      title,
+      content,
+      image,
+      id,
+    ]);
+
+    // Verificar si el artículo ha sido actualizado correctamente
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "El artículo no existe" });
+    }
+
+    res.json({ message: "El artículo ha sido actualizado correctamente" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+  }
+});
+
+
+///////////////////////////////////////////////////
+
 app.listen(port, function () {
   console.log(`Servidor NODE en el puerto ${port}`);
 });

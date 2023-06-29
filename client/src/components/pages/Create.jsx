@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { FaSave } from 'react-icons/fa';
@@ -9,6 +9,7 @@ export const Create = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [image, setImage] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
@@ -23,7 +24,7 @@ export const Create = () => {
       formData.append('content', content);
       formData.append('image', image);
 
-      const request = await fetch(Global.url + "create/", {
+      const request = await fetch(Global.url + 'create/', {
         method: 'POST',
         body: formData,
       });
@@ -31,7 +32,7 @@ export const Create = () => {
       const data = await request.json();
       console.log(title, content, image);
       console.log(data);
-      // Realizar acciones adicionales después de crear el post
+      setIsSaved(true);
     } catch (error) {
       console.error('Error:', error);
     }
@@ -43,10 +44,26 @@ export const Create = () => {
     setImage(null);
   };
 
+  useEffect(() => {
+    if (isSaved) {
+      const timer = setTimeout(() => {
+        setIsSaved(false);
+        window.location.href = '/';
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isSaved]);
+
   return (
     <div className="d-flex justify-content-center">
       <Form className="row form-border" onSubmit={handleSubmit} onReset={handleReset}>
         <h1 className="text-center mb-4">Agregar Receta</h1>
+        {isSaved && (
+          <div className="alert alert-success" role="alert">
+            ¡La receta se guardó correctamente! Redireccionando al home...
+          </div>
+        )}
         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
           <Form.Label>Titulo:</Form.Label>
           <Form.Control type="text" placeholder="ejemplo: Cachopo" value={title} onChange={(e) => setTitle(e.target.value)} />
