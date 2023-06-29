@@ -31,8 +31,7 @@ const routes_articulo = require("./routes/articulo");
 app.use("/", routes_articulo);
 
 // Configurar la ruta para servir archivos estáticos
-app.use('/upload', express.static('public/uploads/images'));
-
+app.use('/public/uploads/images', express.static('public/uploads/images'));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
@@ -49,26 +48,29 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Ruta para la carga de imágenes
-app.post('/upload', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No se ha seleccionado ninguna imagen.');
+app.post('/create', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('No se ha seleccionado ninguna imagen.');
+    }
+
+    // Aquí puedes realizar cualquier procesamiento adicional con la imagen cargada
+
+    // Obtener la ruta de la imagen cargada
+    const imagePath = req.file.path.replace('public/', '');
+
+    // Guardar la ruta de la imagen en la base de datos
+    const dbConnection = await connection();
+    const createArticuloSql = 'INSERT INTO posts (title, content, image) VALUES (?, ?, ?)';
+    const [result] = await dbConnection.query(createArticuloSql, [req.body.title, req.body.content, imagePath]);
+
+    res.json({ id: result.insertId });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Ha ocurrido un error en el servidor' });
   }
-
-  // Aquí puedes realizar cualquier procesamiento adicional con la imagen cargada
-
-  res.send('La imagen se ha cargado correctamente.');
 });
 
-
-
-//Ruta de prueba
-app.get("/ruta-prueba", (req, res) => {
-  return res.status(200).json({
-    id: 1,
-    nombre: "Omar",
-    apellido: "Gannem",
-  });
-});
 
 /////////// Ruta para obtener Articulos/////////////////
 app.get("/articulos", async (req, res) => {
