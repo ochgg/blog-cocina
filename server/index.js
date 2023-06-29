@@ -31,8 +31,7 @@ const routes_articulo = require("./routes/articulo");
 app.use("/", routes_articulo);
 
 // Configurar la ruta para servir archivos estáticos
-app.use('/upload', express.static('public/uploads/images'));
-
+app.use('/public/uploads/images', express.static('public/uploads/images'));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
@@ -49,26 +48,29 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Ruta para la carga de imágenes
-app.post('/upload', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No se ha seleccionado ninguna imagen.');
+app.post('/create', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send('No se ha seleccionado ninguna imagen.');
+    }
+
+    // Aquí puedes realizar cualquier procesamiento adicional con la imagen cargada
+
+    // Obtener la ruta de la imagen cargada
+    const imagePath = req.file.path.replace('public/', '');
+
+    // Guardar la ruta de la imagen en la base de datos
+    const dbConnection = await connection();
+    const createArticuloSql = 'INSERT INTO posts (title, content, image) VALUES (?, ?, ?)';
+    const [result] = await dbConnection.query(createArticuloSql, [req.body.title, req.body.content, imagePath]);
+
+    res.json({ id: result.insertId });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Ha ocurrido un error en el servidor' });
   }
-
-  // Aquí puedes realizar cualquier procesamiento adicional con la imagen cargada
-
-  res.send('La imagen se ha cargado correctamente.');
 });
 
-
-
-//Ruta de prueba
-app.get("/ruta-prueba", (req, res) => {
-  return res.status(200).json({
-    id: 1,
-    nombre: "Omar",
-    apellido: "Gannem",
-  });
-});
 
 /////////// Ruta para obtener Articulos/////////////////
 app.get("/articulos", async (req, res) => {
@@ -82,6 +84,53 @@ app.get("/articulos", async (req, res) => {
     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
   }
 });
+
+/////////// Ruta para obtener Un Articulo/////////////////
+app.get("/articulo/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const dbConnection = await connection();
+    const getArticulosSql = "SELECT * FROM posts WHERE id_posts = ?";
+    const [articulos] = await dbConnection.query(getArticulosSql, [id]);
+    res.json(articulos);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+  }
+});
+
+///////////////// Ruta para editar un articulo////////////
+app.put("/articulo/:id", upload.single("image"), async (req, res) => {
+  const { id } = req.params;
+  const { title, content } = req.body;
+  const image = req.file ? req.file.filename : null; // Obtener el nombre del archivo si se ha subido
+
+  try {
+    const dbConnection = await connection();
+    const updateArticuloSql =
+      "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
+    const [result] = await dbConnection.query(updateArticuloSql, [
+      title,
+      content,
+      image,
+      id,
+    ]);
+
+    // Verificar si el artículo ha sido actualizado correctamente
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "El artículo no existe" });
+    }
+
+    res.json({ message: "El artículo ha sido actualizado correctamente" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
+  }
+});
+
+
+///////////////////////////////////////////////////
 
 app.listen(port, function () {
   console.log(`Servidor NODE en el puerto ${port}`);

@@ -43,16 +43,16 @@ export const Home = () => {
           </div>
         </div>
       </section>
-
+    
       <div className="py-5 bg-light">
         <div className="container">
           <div className="row row-cols-1 row-cols-md-3 g-3">
             {articulos.map(articulo => (
               <article key={articulo.id} className="col">
                 <div className="card shadow-sm">
-                  <Link to={'/articulo/' + articulo.id}>
+                  <Link to={'/articulo/' + articulo.id_posts}>
                     <img
-                      src="https://i.blogs.es/8ad4da/arepas/1366_2000.jpg"
+                      src={Global.url + articulo.image}
                       className="bd-placeholder-img card-img-top"
                       width="100%"
                       height="225"
@@ -60,13 +60,13 @@ export const Home = () => {
                     />
                   </Link>
                   <div className="card-body">
-                    <h3 className="card-item">
-                      <Link to={'/articulo/' + articulo.id}>{articulo.title}</Link>
-                    </h3>
-                    <p className="card-text">{articulo.title.slice(0, 47) + '...'}</p>
+                    <h2 className="card-item">
+                      <Link to={'/articulo/' + articulo.id_posts}>{articulo.title}</Link>
+                    </h2>
+                    <p className="card-text">{articulo.content.slice(0, 47) +'...'}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">
-                        <Link to={'/articulo/' + articulo.id} className="btn btn-sm btn-outline-secondary">
+                        <Link to={'/articulo/' + articulo.id_posts} className="btn btn-sm btn-outline-secondary">
                           <IoEyeOutline />
                         </Link>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
