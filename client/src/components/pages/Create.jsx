@@ -49,7 +49,7 @@ export const Create = () => {
       const timer = setTimeout(() => {
         setIsSaved(false);
         window.location.href = '/';
-      }, 3000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }

@@ -67,6 +67,7 @@ export const Article = () => {
     }
     };
 
+  
     return (
       <>
         <div className="py-5 bg-light">
@@ -80,7 +81,7 @@ export const Article = () => {
                       <div className="d-flex justify-content-center align-items-center">
                         <h2 className="card-item">{articulo.title}</h2>
                       </div>
-                      <p className="card-text">{articulo.content}</p>
+                      <p style={{ textAlign: 'justify' }} className="card-text">{articulo.content}</p>
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="btn-group">
                           <button className="btn btn-sm btn-outline-secondary" onClick={enterEditMode} disabled={isEditMode}>

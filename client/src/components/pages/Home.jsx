@@ -28,6 +28,31 @@ export const Home = () => {
     }
   };
 
+  // Función para eliminar la publicación y la imagen
+  const handleDelete = async (id) => {
+
+    const confirmDelete = window.confirm('¿Desea borrar la receta?');
+
+    if (confirmDelete) {
+      try {
+        const request = await fetch(Global.url + `delete/${id}`, { method: 'DELETE' });
+        const data = await request.json();
+
+        if (data.status === 'success') {
+          console.log('La publicación ha sido eliminada correctamente');
+          // Realizar cualquier otra lógica necesaria después de eliminar la publicación
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
+        } else {
+          console.error('Error al eliminar la publicación:', data.message);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+    };
+
   return (
     <>
       <section className="py-5 text-center container">
@@ -69,7 +94,7 @@ export const Home = () => {
                         <Link to={'/articulo/' + articulo.id_posts} className="btn btn-sm btn-outline-secondary">
                           <IoEyeOutline />
                         </Link>
-                        <button type="button" className="btn btn-sm btn-outline-secondary">
+                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => handleDelete(articulo.id_posts)}>
                           <RiDeleteBinLine />
                         </button>
                       </div>
