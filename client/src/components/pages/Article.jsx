@@ -37,25 +37,19 @@ export const Article = () => {
             {articulo.map(articulo => (
               <article key={articulo.id} className="col">
                 <div className="card shadow-sm">
-                  <Link to={`/articulo/${articulo.id_posts}`}>
-                    <img src={Global.url + articulo.image} className="bd-placeholder-img card-img-top" width="100%" height="225" alt="Imagen de la receta" />
-                  </Link>
+                  <img src={Global.url + articulo.image} className="bd-placeholder-img card-img-top" width="100%" height="225" alt="Imagen de la receta" />
                   <div className="card-body">
                     <div className="d-flex justify-content-center align-items-center">
-                      <h2 className="card-item">
-                        <Link to={`/articulo/${articulo.id_posts}`}>
-                          {articulo.title}
-                        </Link>
-                      </h2>
+                      <h2 className="card-item">{articulo.title}</h2>
                     </div>
                     <p className="card-text">{articulo.content}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">
-                        <Link to={`/articulo/${articulo.id_posts}`} className="btn btn-sm btn-outline-secondary">
-                        <BiPencil />
-                        </Link>
+                        <button className="btn btn-sm btn-outline-secondary">
+                          <BiPencil />
+                        </button>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
-                        <FaSave />
+                          <FaSave />
                         </button>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
                           <RiDeleteBinLine />
