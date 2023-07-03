@@ -22,7 +22,6 @@ export const Home = () => {
       });
 
       const data = await request.json();
-      console.log(data);
       if (Array.isArray(data)) {
         setArticulos(data);
       }

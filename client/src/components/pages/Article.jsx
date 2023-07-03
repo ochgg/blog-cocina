@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaSave } from "react-icons/fa";
-// import { GiBroom } from "react-icons/gi";
 import { BiPencil } from "react-icons/bi";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
@@ -38,7 +37,6 @@ export const Article = () => {
           throw new Error("Error al obtener el artículo");
         }
         const data = await response.json();
-        console.log(data);
         setArticulo(data[0]);
         setIsLoading(false);
       } catch (error) {
@@ -79,7 +77,7 @@ export const Article = () => {
     try {
       const { title, content } = formData;
 
-      const formDataToSend = new FormData(); // Renombra la variable a 'formDataToSend' o cualquier otro nombre
+      const formDataToSend = new FormData();
 
       console.log('Image:', image);
 
@@ -179,7 +177,7 @@ export const Article = () => {
           onSubmit={handleSubmit(onSubmit)}
           onReset={handleReset}
         >
-          <h1 className="text-center mb-4">Editar Receta</h1>
+          <h1 className="text-center mb-4">Receta</h1>
           {isSaved && (
             <div className="alert alert-success" role="alert">
               ¡El artículo se actualizo correctamente!
@@ -233,17 +231,8 @@ export const Article = () => {
                   title: e.target.value,
                 }))
               }
-            // disabled={!isEditMode}
+              disabled={!isEditMode}
             />
-            {errors.title?.type === "required" && !isSaved && (
-              <p>El campo título es requerido</p>
-            )}
-            {errors.title?.type === "minLength" && (
-              <p>El campo debe tener mínimo 10 caracteres</p>
-            )}
-            {errors.title?.type === "maxLength" && (
-              <p>El campo debe tener menos de 100 caracteres</p>
-            )}
           </Form.Group>
 
           <Form.Group controlId="exampleForm.ControlTextarea1">
@@ -260,18 +249,8 @@ export const Article = () => {
                 }))
               }
               style={{ height: `${(formData.content?.split('\n').length || 1) * 1.8}rem` }}
-
-            // disabled={!isEditMode}
+              disabled={!isEditMode}
             />
-            {errors.content?.type === "required" && !isSaved && (
-              <p>El campo contenido es requerido</p>
-            )}
-            {errors.content?.type === "minLength" && (
-              <p>El campo debe tener mínimo 10 caracteres</p>
-            )}
-            {errors.content?.type === "maxLength" && (
-              <p>El campo debe tener menos de 2000 caracteres</p>
-            )}
           </Form.Group>
 
           <div className="d-flex justify-content-between align-items-center">

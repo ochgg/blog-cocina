@@ -5,7 +5,7 @@ const cors = require("cors");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 
 require("dotenv").config();
 
@@ -29,73 +29,53 @@ app.use(express.urlencoded({ extended: true }));
 //Carga las rutas
 app.get("/", (req, res) => {
   const data = {
-    message: "Hola desde MI Cocina"
+    message: "Hola desde MI Cocina",
   };
   res.json(data);
 });
 
 // Configurar la ruta para servir archivos estáticos
-app.use('/public/uploads/images', express.static('public/uploads/images'));
+app.use("/public/uploads/images", express.static("public/uploads/images"));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/uploads/images');
+    cb(null, "public/uploads/images");
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const extname = path.extname(file.originalname);
     cb(null, uniqueSuffix + extname);
-  }
+  },
 });
 
 const upload = multer({ storage });
-
 // Ruta para la carga de imágenes
-// app.post('/articulo', upload.single('image'), async (req, res) => {
-//   try {
-//     if (!req.file) {
-//       return res.status(400).send('No se ha seleccionado ninguna imagen.');
-//     }
-
-//     // Obtener la ruta de la imagen cargada
-//     const imagePath = req.file.path.replace('public/', '');
-
-//     // Guardar la ruta de la imagen en la base de datos
-//     const dbConnection = await connection();
-//     const createArticuloSql = 'INSERT INTO posts (title, content, image) VALUES (?, ?, ?)';
-//     const [result] = await dbConnection.query(createArticuloSql, [req.body.title, req.body.content, imagePath]);
-
-//     res.json({ id: result.insertId });
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).json({ message: 'Ha ocurrido un error en el servidor' });
-//   }
-// });
-
-
-// Ruta para la carga de imágenes
-app.post('/create', upload.single('image'), async (req, res) => {
+app.post("/create", upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).send('No se ha seleccionado ninguna imagen.');
+      return res.status(400).send("No se ha seleccionado ninguna imagen.");
     }
 
     // Obtener la ruta de la imagen cargada
-    const imagePath = req.file.path.replace('public/', '');
+    const imagePath = req.file.path.replace("public/", "");
 
     // Guardar la ruta de la imagen en la base de datos
     const dbConnection = await connection();
-    const createArticuloSql = 'INSERT INTO posts (title, content, image) VALUES (?, ?, ?)';
-    const [result] = await dbConnection.query(createArticuloSql, [req.body.title, req.body.content, imagePath]);
+    const createArticuloSql =
+      "INSERT INTO posts (title, content, image) VALUES (?, ?, ?)";
+    const [result] = await dbConnection.query(createArticuloSql, [
+      req.body.title,
+      req.body.content,
+      imagePath,
+    ]);
 
     res.json({ id: result.insertId });
   } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ message: 'Ha ocurrido un error en el servidor' });
+    console.error("Error:", error);
+    res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
   }
 });
-
 
 /////////// Ruta para obtener Articulos/////////////////
 app.get("/articulos", async (req, res) => {
@@ -125,124 +105,7 @@ app.get("/articulo/:id", async (req, res) => {
   }
 });
 
-///////////////// Ruta para editar un articulo////////////
-// app.put("/articulo/:id", upload.single("image"), async (req, res) => {
-//   const { id } = req.params;
-//   const { title, content } = req.body;
-//   const image = req.file ? req.file.filename : null; // Obtener el nombre del archivo si se ha subido
-
-//   try {
-//     const dbConnection = await connection();
-//     const updateArticuloSql =
-//       "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
-//     const [result] = await dbConnection.query(updateArticuloSql, [
-//       title,
-//       content,
-//       image,
-//       id,
-//     ]);
-
-//     // Verificar si el artículo ha sido actualizado correctamente
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: "El artículo no existe" });
-//     }
-
-//     res.json({ message: "El artículo ha sido actualizado correctamente" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
-//   }
-// });
-
-
-///////////////Borrar Articulo//////////////
-// app.delete("/delete/:id", async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const dbConnection = await connection();
-//     const deleteArticuloSql = "DELETE FROM posts WHERE id_posts = ?";
-//     const [result] = await dbConnection.query(deleteArticuloSql, [id]);
-
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: "El articulo no existe" });
-//     }
-
-//     res.json({ status: "success" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
-//   }
-// });
-
-
-// Ruta para editar un artículo
-// app.put("/articulo/:id", upload.single("image"), async (req, res) => {
-//   const { id } = req.params;
-//   const { title, content } = req.body;
-//   const image = req.file ? req.file.filename : null; // Obtener el nombre del archivo si se ha subido
-
-//   try {
-//     const dbConnection = await connection();
-//     const updateArticuloSql =
-//       "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
-//     const [result] = await dbConnection.query(updateArticuloSql, [
-//       title,
-//       content,
-//       image,
-//       id,
-//     ]);
-
-//     // Verificar si el artículo ha sido actualizado correctamente
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: "El artículo no existe" });
-//     }
-
-//     res.json({ message: "El artículo ha sido actualizado correctamente" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
-//   }
-// });
-
-//////////// Ruta para editar y borrar la imagen antigua///////////////////
-// app.put("/articulo/:id", async (req, res) => {
-//   const { id } = req.params; // Obtiene el parámetro ID de la solicitud
-//   const { title, content, image } = req.body;
-
-//   try {
-//     const dbConnection = await connection(); // Establece una conexión a la base de datos
-
-//     // Consulta SQL para obtener la imagen de la publicación antes de borrarla
-//     const selectImageSql = "SELECT image FROM posts WHERE id_posts = ?";
-//     const [selectResult] = await dbConnection.query(selectImageSql, [id]);
-
-//     if (selectResult.length === 0) {
-//       return res.status(404).json({ message: "La publicación no existe" });
-//     }
-
-//     const imageFileName = selectResult[0].image;
-
-//     // Consulta SQL para eliminar la publicación con el ID especificado
-//     const updateArticuloSql = "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
-//     const [updateResult] = await dbConnection.query(updateArticuloSql, [title, content, image, id]);
-
-//     if (updateResult.affectedRows === 0) {
-//       return res.status(404).json({ message: "La publicación no existe" });
-//     }
-
-//     // Borrar la imagen del servidor
-//     deleteImage(imageFileName);
-
-//     res.json({ status: "success" });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
-//   }
-// });
-
-////////////////////////////////////////////////////////
-
-// Ruta para eliminar un articulo
+//////// Ruta para eliminar un articulo ////////////////////
 app.delete("/delete/:id", async (req, res) => {
   const { id } = req.params; // Obtiene el parámetro ID de la solicitud
 
@@ -277,26 +140,8 @@ app.delete("/delete/:id", async (req, res) => {
   }
 });
 
-// Función para borrar una imagen del servidor
-// function deleteImage(imageFileName) {
-//   const imagePath = path.join(__dirname, '/', imageFileName);
-//   fs.unlink(imagePath, (err) => {
-//     if (err) {
-//       console.error('Error al borrar la imagen:', err);
-//     } else {
-//       console.log('Imagen borrada:', imageFileName);
-//     }
-//   });
-// }
-
-
-
-
-///////////////////////////////////////////////////
-
-
 //////////////////Editar articulo//////////////
-app.put("/editar/:id", upload.single('image'), async (req, res) => {
+app.put("/editar/:id", upload.single("image"), async (req, res) => {
   const id = req.params.id;
   const { title, content } = req.body;
 
@@ -305,7 +150,7 @@ app.put("/editar/:id", upload.single('image'), async (req, res) => {
 
     if (req.file) {
       const image = req.file;
-      const imagePath = image.path.replace('public/');
+      const imagePath = image.path.replace("public/");
 
       // Consulta SQL para obtener la imagen de la publicación antes de actualizarla
       const selectImageSql = "SELECT image FROM posts WHERE id_posts = ?";
@@ -318,8 +163,14 @@ app.put("/editar/:id", upload.single('image'), async (req, res) => {
       const imageFileName = selectResult[0].image;
 
       // Consulta SQL para actualizar la publicación con la nueva imagen
-      const updateArticuloSql = 'UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?';
-      const [updateResult] = await dbConnection.query(updateArticuloSql, [title, content, imagePath, id]);
+      const updateArticuloSql =
+        "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
+      const [updateResult] = await dbConnection.query(updateArticuloSql, [
+        title,
+        content,
+        imagePath,
+        id,
+      ]);
 
       if (updateResult.affectedRows === 0) {
         return res.status(404).json({ message: "La publicación no existe" });
@@ -331,8 +182,13 @@ app.put("/editar/:id", upload.single('image'), async (req, res) => {
       res.json({ status: "success", imageUrl: imagePath });
     } else {
       // Consulta SQL para actualizar la publicación sin cambiar la imagen
-      const updateArticuloSql = "UPDATE posts SET title = ?, content = ? WHERE id_posts = ?";
-      const [updateResult] = await dbConnection.query(updateArticuloSql, [title, content, id]);
+      const updateArticuloSql =
+        "UPDATE posts SET title = ?, content = ? WHERE id_posts = ?";
+      const [updateResult] = await dbConnection.query(updateArticuloSql, [
+        title,
+        content,
+        id,
+      ]);
 
       if (updateResult.affectedRows === 0) {
         return res.status(404).json({ message: "La publicación no existe" });
@@ -346,50 +202,17 @@ app.put("/editar/:id", upload.single('image'), async (req, res) => {
   }
 });
 
-// Función para borrar una imagen del servidor
+////// Función para borrar una imagen del servidor///////////////
 function deleteImage(imageFileName) {
-  const imagePath = path.join(__dirname, '/', imageFileName);
+  const imagePath = path.join(__dirname, "/", imageFileName);
   fs.unlink(imagePath, (err) => {
     if (err) {
-      console.error('Error al borrar la imagen:', err);
+      console.error("Error al borrar la imagen:", err);
     } else {
-      console.log('Imagen borrada:', imageFileName);
+      console.log("Imagen borrada:", imageFileName);
     }
   });
 }
-
-
-
-
-
-
-
-/////////////////////////////editar funciona bien/////////////////////////////
-// app.put("/editar/:id", async (req, res) => {
-//   const id = req.params.id;
-//   const { title, content, image } = req.body;
-
-//   try {
-//     const dbConnection = await connection();
-
-//     const updateArticuloSql = "UPDATE posts SET title = ?, content = ?, image = ? WHERE id_posts = ?";
-//     const [result] = await dbConnection.query(updateArticuloSql, [title, content, image, id]);
-
-//     if (result.affectedRows === 0) {
-//       return res.status(404).json({ message: "El artículo no existe" });
-//     }
-
-//     res.json({ message: "Artículo actualizado correctamente." });
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ message: "Ha ocurrido un error en el servidor" });
-//   }
-// });
-
-
-
-
-///////////////////////////////////////////////////
 
 app.listen(port, function () {
   console.log(`Servidor NODE en el puerto ${port}`);
