@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FaSave } from "react-icons/fa";
-import { GiBroom } from "react-icons/gi";
+// import { GiBroom } from "react-icons/gi";
 import { BiPencil } from "react-icons/bi";
-import { RiArrowGoBackLine } from "react-icons/ri";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { Global } from "../../helpers/Global";
@@ -79,19 +78,19 @@ export const Article = () => {
   const saveChanges = async () => {
     try {
       const { title, content } = formData;
-  
+
       const formDataToSend = new FormData(); // Renombra la variable a 'formDataToSend' o cualquier otro nombre
-  
+
       console.log('Image:', image);
-  
+
       formDataToSend.append('title', title);
       formDataToSend.append('content', content);
-  
+
       // Adjunta la imagen al FormData si existe
       if (image) {
         formDataToSend.append('image', image);
       }
-  
+
       const response = await fetch(Global.url + `editar/${id}`, {
         method: "PUT",
         body: formDataToSend,
@@ -113,7 +112,7 @@ export const Article = () => {
       } else {
         console.error("Error al guardar los cambios:", responseData.error);
         // Mostrar mensaje de error al usuario
-        
+
         setError("Error al guardar los cambios. Por favor, inténtelo de nuevo.");
       }
     } catch (error) {
@@ -124,10 +123,10 @@ export const Article = () => {
   };
 
   const onSubmit = (data) => {
-    console.log(data);
     setIsSaved(true);
     setIsEditMode(false);
     setIsModified(true);
+    // setImagePreview("true");
     saveChanges(data);
   };
 
@@ -146,14 +145,6 @@ export const Article = () => {
     setIsEditMode(true);
     setShowBackButton(true);
     setShowImage(true);
-  };
-
-  const handleGoBack = () => {
-    if (isEditMode) {
-      setIsEditMode(false);
-      setShowBackButton(false);
-      setShowImage(false);
-    }
   };
 
   const handleDelete = async () => {
@@ -191,10 +182,10 @@ export const Article = () => {
           <h1 className="text-center mb-4">Editar Receta</h1>
           {isSaved && (
             <div className="alert alert-success" role="alert">
-              ¡El artículo se guardó correctamente! Redireccionando al inicio...
+              ¡El artículo se actualizo correctamente!
             </div>
           )}
-          {!isEditMode && articulo && (
+          {!isEditMode && articulo && !isSaved && (
             <div className="card shadow-sm">
               <img
                 src={Global.url + articulo.image}
@@ -205,7 +196,7 @@ export const Article = () => {
               />
             </div>
           )}
-          {(imagePreview || (isEditMode && showImage) || imageUrl) && (
+          {(imagePreview || (isEditMode && showImage) || imageUrl || (isEditMode && !isSaved)) && (
             <div className="mb-3">
               <img
                 src={imagePreview || imageUrl || (articulo && Global.url + articulo.image)}
@@ -242,7 +233,7 @@ export const Article = () => {
                   title: e.target.value,
                 }))
               }
-              disabled={!isEditMode}
+            // disabled={!isEditMode}
             />
             {errors.title?.type === "required" && !isSaved && (
               <p>El campo título es requerido</p>
@@ -268,7 +259,9 @@ export const Article = () => {
                   content: e.target.value,
                 }))
               }
-              disabled={!isEditMode}
+              style={{ height: `${(formData.content?.split('\n').length || 1) * 1.8}rem` }}
+
+            // disabled={!isEditMode}
             />
             {errors.content?.type === "required" && !isSaved && (
               <p>El campo contenido es requerido</p>
@@ -283,23 +276,13 @@ export const Article = () => {
 
           <div className="d-flex justify-content-between align-items-center">
             <div className="btn-group">
-              {isEditMode ? (
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={handleGoBack}
-                >
-                  <RiArrowGoBackLine />
-                </button>
-              ) : (
-                <button
-                  className="btn btn-sm btn-outline-secondary"
-                  onClick={enterEditMode}
-                  disabled={isEditMode}
-                >
-                  <BiPencil />
-                </button>
-              )}
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={enterEditMode}
+                disabled={isEditMode}
+              >
+                <BiPencil />
+              </button>
               {isEditMode && (
                 <button
                   type="submit"

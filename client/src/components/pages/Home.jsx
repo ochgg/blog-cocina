@@ -4,9 +4,12 @@ import { IoEyeOutline } from 'react-icons/io5';
 import { Link } from 'react-router-dom';
 import { Global } from '../../helpers/Global';
 import ReactTimeAgo from 'react-time-ago';
+import Pagination from 'react-bootstrap/Pagination';
 
 export const Home = () => {
   const [articulos, setArticulos] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const entriesPerPage = 9;
 
   useEffect(() => {
     conseguirArticulos();
@@ -14,7 +17,7 @@ export const Home = () => {
 
   const conseguirArticulos = async () => {
     try {
-      const request = await fetch(Global.url + "articulos/", {
+      const request = await fetch(Global.url + 'articulos/', {
         method: 'GET',
       });
 
@@ -28,9 +31,7 @@ export const Home = () => {
     }
   };
 
-  // Función para eliminar la publicación y la imagen
   const handleDelete = async (id) => {
-
     const confirmDelete = window.confirm('¿Desea borrar la receta?');
 
     if (confirmDelete) {
@@ -40,7 +41,6 @@ export const Home = () => {
 
         if (data.status === 'success') {
           console.log('La publicación ha sido eliminada correctamente');
-          // Realizar cualquier otra lógica necesaria después de eliminar la publicación
           setTimeout(() => {
             window.location.href = '/';
           }, 1000);
@@ -51,7 +51,20 @@ export const Home = () => {
         console.error('Error:', error);
       }
     }
-    };
+  };
+
+  const indexOfLastEntry = (currentPage + 1) * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = articulos.slice(indexOfFirstEntry, indexOfLastEntry);
+
+  const paginate = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(articulos.length / entriesPerPage); i++) {
+    pageNumbers.push(i);
+  }
 
   return (
     <>
@@ -68,11 +81,11 @@ export const Home = () => {
           </div>
         </div>
       </section>
-    
+
       <div className="py-5 bg-light">
         <div className="container">
           <div className="row row-cols-1 row-cols-md-3 g-3">
-            {articulos.map(articulo => (
+            {currentEntries.map((articulo) => (
               <article key={articulo.id} className="col">
                 <div className="card shadow-sm">
                   <Link to={'/articulo/' + articulo.id_posts}>
@@ -88,13 +101,17 @@ export const Home = () => {
                     <h2 className="card-item">
                       <Link to={'/articulo/' + articulo.id_posts}>{articulo.title}</Link>
                     </h2>
-                    <p className="card-text">{articulo.content.slice(0, 47) +'...'}</p>
+                    <p className="card-text">{articulo.content.slice(0, 47) + '...'}</p>
                     <div className="d-flex justify-content-between align-items-center">
                       <div className="btn-group">
                         <Link to={'/articulo/' + articulo.id_posts} className="btn btn-sm btn-outline-secondary">
                           <IoEyeOutline />
                         </Link>
-                        <button type="button" className="btn btn-sm btn-outline-secondary" onClick={() => handleDelete(articulo.id_posts)}>
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-secondary"
+                          onClick={() => handleDelete(articulo.id_posts)}
+                        >
                           <RiDeleteBinLine />
                         </button>
                       </div>
@@ -106,6 +123,15 @@ export const Home = () => {
                 </div>
               </article>
             ))}
+          </div>
+          <div className="text-center mt-4">
+            <Pagination>
+              {pageNumbers.map((number) => (
+                <Pagination.Item key={number} active={number === currentPage + 1} onClick={() => paginate(number - 1)}>
+                  {number}
+                </Pagination.Item>
+              ))}
+            </Pagination>
           </div>
         </div>
       </div>
