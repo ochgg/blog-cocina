@@ -177,7 +177,7 @@ export const Article = () => {
           onSubmit={handleSubmit(onSubmit)}
           onReset={handleReset}
         >
-          <h1 className="text-center mb-4">Receta</h1>
+          <h1 className="text-center mb-4">{articulo.title}</h1>
           {isSaved && (
             <div className="alert alert-success" role="alert">
               ¡El artículo se actualizo correctamente!
@@ -278,9 +278,7 @@ export const Article = () => {
               >
                 <RiDeleteBinLine />
               </button>
-
             </div>
-
             <small className="text-muted">
               {articulo && new Date(articulo.create_at).toLocaleDateString("es-ES")}
             </small>
