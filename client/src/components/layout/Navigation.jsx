@@ -11,7 +11,6 @@ export const Navigation = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" className="custom-toggle" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            {/* <Link to="/home" className="nav-link text-white">Inicio</Link> */}
             <Link to="/inicio" className="nav-link text-white">
               <FaHome />
             </Link>

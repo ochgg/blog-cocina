@@ -49,7 +49,7 @@ export const Create = () => {
       const timer = setTimeout(() => {
         setIsSaved(false);
         window.location.href = '/';
-      }, 3000);
+      }, 1000);
 
       return () => clearTimeout(timer);
     }
@@ -78,10 +78,10 @@ export const Create = () => {
         </Form.Group>
         <div className="d-flex justify-content-between">
           <Button variant="secondary" type="submit">
-            <FaSave className="mr-2" /> Guardar
+            <FaSave className="mr-2" />
           </Button>
           <Button variant="secondary" type="reset">
-            <GiBroom className="mr-2" /> Limpiar
+            <GiBroom className="mr-2" />
           </Button>
         </div>
       </Form>
