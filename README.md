@@ -1,6 +1,10 @@
 # blog-cocina
 Desde mi cocina es un blog de recetas de cocina que si funcionan.
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+
 NOTA DE FUNCIONABILIDAD:
 
 Aquí tienes una descripción de la funcionalidad asociada a cada ícono:
@@ -18,7 +22,9 @@ En la visualización de un artículo completo:
 6.	FaSave (ícono de disco): Se utiliza para representar la acción de "Guardar receta" o "Guardar cambios". Al hacer clic en este ícono, se espera que el usuario guarde los cambios realizados en la receta.
 7.	RiDeleteBinLine (ícono de contenedor de basura): Se utiliza para representar la acción de "Borrar receta". Al hacer clic en este ícono, se espera que el usuario elimine la receta completa.
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////
+
 
 Memoria Explicativa Proyecto
 “Desde MI Cocina”
